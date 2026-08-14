@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T-Rex Runner</title>
+    <title>GDC - Win a Prize!</title>
+    <link rel="icon" type="image/png" href="assets/GDlogo_2_ortp@10x.png">
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <style>
         * {
@@ -13,7 +15,8 @@
         }
 
         body {
-            background-color: #f7941d; /* Matches the orange in the image */
+            background-color: #f7941d;
+            /* Matches the orange in the image */
             color: #000;
             font-family: 'Press Start 2P', monospace;
             height: 100vh;
@@ -41,19 +44,26 @@
         .title {
             font-size: 3rem;
             color: #fff;
-            text-shadow: 4px 4px 0px #333; /* Dark gray/black shadow */
+            text-shadow: 4px 4px 0px #333;
+            /* Dark gray/black shadow */
             margin-bottom: 15px;
             letter-spacing: 2px;
         }
 
-        .logo-placeholder {
+        .subtitle {
             display: inline-block;
             background-color: #333;
-            color: #f7941d;
-            padding: 8px 16px;
-            border: 2px solid #fff;
-            font-size: 1rem;
+            color: #ffeb3b;
+            /* Matches the prize highlight */
+            padding: 8px 24px;
+            border-radius: 20px;
+            /* Pill shape */
+            border: 2px dashed #fff;
+            font-size: 0.7rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 29px;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
         }
 
         .main-content {
@@ -114,10 +124,11 @@
             font-family: 'Press Start 2P', monospace;
             font-size: 0.7rem;
             border: 3px solid #333;
-            background-color: #d0dbe5; /* slight blue-grey */
+            background-color: #d0dbe5;
+            /* slight blue-grey */
             color: #333;
         }
-        
+
         input::placeholder {
             color: #666;
         }
@@ -131,7 +142,8 @@
 
         /* Button */
         .begin-btn {
-            background-color: #e65100; /* Darker orange/red */
+            background-color: #e65100;
+            /* Darker orange/red */
             color: #fff;
             font-family: 'Press Start 2P', monospace;
             font-size: 1.8rem;
@@ -157,199 +169,245 @@
                 flex-direction: column;
                 align-items: center;
             }
+
             .box {
                 width: 90%;
             }
+
             .title {
                 font-size: 2rem;
             }
+
             .container {
                 overflow-y: auto;
                 height: 100vh;
                 justify-content: flex-start;
             }
         }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <div class="header">
-        <h1 class="title">T-REX RUNNER</h1>
-        <div class="logo-placeholder">[LOGO PLACEHOLDER]</div>
-    </div>
-
-    <div class="main-content">
-        <div class="box">
-            <h2 class="box-title">TOP 5</h2>
-            <!-- Leaderboard rows are injected by loadLeaderboard() -->
-            <ul class="leaderboard-list" id="leaderboardList">
-                <li style="justify-content:center; color:#888;">Loading...</li>
-            </ul>
-        </div>
-
-        <div class="box">
-            <h2 class="box-title">PLAYER INFO</h2>
-            <form id="playerForm">
-                <div class="form-group">
-                    <label for="playerName">Name</label>
-                    <input type="text" id="playerName" placeholder="Enter Name" required>
-                    <div class="error-message" id="nameError">Name is required</div>
-                </div>
-                <div class="form-group">
-                    <label for="playerMobile">Mobile Number</label>
-                    <input type="text" id="playerMobile" placeholder="05xxxxxxxx" required>
-                    <div class="error-message" id="mobileError">Must be 10 digits starting with 05</div>
-                </div>
-                <div class="form-group">
-                    <label for="playerEmail">RIT Email</label>
-                    <input type="email" id="playerEmail" placeholder="email@rit.edu" required>
-                    <div class="error-message" id="emailError">Valid email required</div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Shown when the player has already played -->
-    <div id="alreadyPlayedMsg" style="display:none; font-size:0.75rem; color:#fff; text-shadow:2px 2px #000; margin-bottom:8px; text-align:center;">hey, you already got a turn :<</div>
-
-    <button class="begin-btn" id="beginBtn" onclick="startGame()">BEGIN</button>
-</div>
-
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
-
-<script>
-    // -------------------------------------------------------------------------
-    // Form validation
-    // -------------------------------------------------------------------------
-    function validateForm() {
-        let isValid = true;
-
-        // Name
-        const name = document.getElementById('playerName').value.trim();
-        if (!name) {
-            document.getElementById('nameError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('nameError').style.display = 'none';
+        /* Prize Banner */
+        .prize-banner {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            border: 4px solid #fff;
+            box-shadow: 6px 6px 0px #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            animation: pulse 2s infinite;
         }
 
-        // Mobile — UAE format: 05xxxxxxxx (exactly 10 digits)
-        const mobile = document.getElementById('playerMobile').value.trim();
-        const mobileRegex = /^05\d{8}$/;
-        if (!mobileRegex.test(mobile)) {
-            document.getElementById('mobileError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('mobileError').style.display = 'none';
+        .prize-highlight {
+            color: #ffeb3b;
+            /* Yellow for emphasis */
+            font-size: 1.1rem;
         }
 
-        // Email
-        const email = document.getElementById('playerEmail').value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            document.getElementById('emailError').style.display = 'block';
-            isValid = false;
-        } else {
-            document.getElementById('emailError').style.display = 'none';
-        }
-
-        return isValid;
-    }
-
-    // -------------------------------------------------------------------------
-    // Stage 3 — BEGIN: check Supabase, create player if new, block if existing
-    // -------------------------------------------------------------------------
-    async function startGame() {
-        // Hide the already-played message on each attempt
-        document.getElementById('alreadyPlayedMsg').style.display = 'none';
-
-        if (!validateForm()) return;
-
-        const name   = document.getElementById('playerName').value.trim();
-        const mobile = document.getElementById('playerMobile').value.trim();
-        const email  = document.getElementById('playerEmail').value.trim();
-
-        const btn = document.getElementById('beginBtn');
-        btn.disabled = true;
-        btn.textContent = 'CHECKING...';
-
-        try {
-            // Check whether this name+email+mobile combination already exists
-            const { data: existing, error: selectError } = await supabase
-                .from('players')
-                .select('id')
-                .eq('name',   name)
-                .eq('email',  email)
-                .eq('mobile', mobile)
-                .maybeSingle();
-
-            if (selectError) throw selectError;
-
-            if (existing) {
-                // Player has already used their one attempt
-                document.getElementById('alreadyPlayedMsg').style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'BEGIN';
-                return;
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
             }
 
-            // New player — insert their record now (highest_score starts at 0)
-            const { error: insertError } = await supabase
-                .from('players')
-                .insert({ name, email, mobile, highest_score: 0 });
+            50% {
+                transform: scale(1.02);
+            }
 
-            if (insertError) throw insertError;
-
-            // Persist identifying info so index.html can update the score later
-            sessionStorage.setItem('playerInfo', JSON.stringify({ name, mobile, email }));
-
-            // Launch the game
-            window.location.href = 'index.html';
-
-        } catch (err) {
-            console.error('Supabase error:', err);
-            btn.disabled = false;
-            btn.textContent = 'BEGIN';
-            alert('Something went wrong. Please try again.');
+            100% {
+                transform: scale(1);
+            }
         }
-    }
+    </style>
+</head>
 
-    // -------------------------------------------------------------------------
-    // Stage 6 — Leaderboard: fetch top 5 from Supabase
-    // -------------------------------------------------------------------------
-    async function loadLeaderboard() {
-        const list = document.getElementById('leaderboardList');
+<body>
 
-        const { data, error } = await supabase
-            .from('leaderboard')   // The view we created — exposes only name + highest_score
-            .select('name, highest_score')
-            .limit(5);
+    <div class="container">
+        <div class="header">
+            <div class="subtitle">The Graphic Design Club</div>
+            <h1 class="title">G-DAZE RUNNER</h1>
+        </div>
 
-        if (error) {
-            console.error('Leaderboard fetch error:', error);
-            list.innerHTML = '<li style="justify-content:center; color:#c00;">Failed to load</li>';
-            return;
-        }
+        <div class="prize-banner">
+            ⭐ TODAY'S TOP SCORER WINS <br>
+            <span class="prize-highlight">AED 100 DHS!</span> ⭐
+        </div>
 
-        if (!data || data.length === 0) {
-            list.innerHTML = '<li style="justify-content:center; color:#888;">No scores yet</li>';
-            return;
-        }
+        <div class="main-content">
+            <div class="box">
+                <h2 class="box-title">TOP 5</h2>
+                <!-- Leaderboard rows are injected by loadLeaderboard() -->
+                <ul class="leaderboard-list" id="leaderboardList">
+                    <li style="justify-content:center; color:#888;">Loading...</li>
+                </ul>
+            </div>
 
-        list.innerHTML = data.map((row, i) => {
-            const rank  = String(i + 1).padStart(2, '0');
-            const name  = row.name.toUpperCase();
-            const score = row.highest_score;
-            return `<li><span>${rank} ${name}</span><span>${score}</span></li>`;
-        }).join('');
-    }
+            <div class="box">
+                <h2 class="box-title">PLAYER INFO</h2>
+                <form id="playerForm">
+                    <div class="form-group">
+                        <label for="playerName">Name</label>
+                        <input type="text" id="playerName" placeholder="Enter Name" required>
+                        <div class="error-message" id="nameError">Name is required</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="playerMobile">Mobile Number</label>
+                        <input type="text" id="playerMobile" placeholder="05xxxxxxxx" required>
+                        <div class="error-message" id="mobileError">Must be 10 digits starting with 05</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="playerEmail">RIT Email</label>
+                        <input type="email" id="playerEmail" placeholder="email@rit.edu" required>
+                        <div class="error-message" id="emailError">Valid email required</div>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    // Load leaderboard on page load
-    loadLeaderboard();
-</script>
+        <!-- Shown when the player has already played -->
+        <div id="alreadyPlayedMsg"
+            style="display:none; font-size:0.75rem; color:#fff; text-shadow:2px 2px #000; margin-bottom:8px; text-align:center;">
+            hey, you already got a turn :<< /div>
+
+                <button class="begin-btn" id="beginBtn" onclick="startGame()">BEGIN</button>
+        </div>
+
+        <!-- Supabase -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="supabase-client.js"></script>
+
+        <script>
+            // -------------------------------------------------------------------------
+            // Form validation
+            // -------------------------------------------------------------------------
+            function validateForm() {
+                let isValid = true;
+
+                // Name
+                const name = document.getElementById('playerName').value.trim();
+                if (!name) {
+                    document.getElementById('nameError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('nameError').style.display = 'none';
+                }
+
+                // Mobile — UAE format: 05xxxxxxxx (exactly 10 digits)
+                const mobile = document.getElementById('playerMobile').value.trim();
+                const mobileRegex = /^05\d{8}$/;
+                if (!mobileRegex.test(mobile)) {
+                    document.getElementById('mobileError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('mobileError').style.display = 'none';
+                }
+
+                // Email
+                const email = document.getElementById('playerEmail').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    document.getElementById('emailError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('emailError').style.display = 'none';
+                }
+
+                return isValid;
+            }
+
+            // -------------------------------------------------------------------------
+            // Stage 3 — BEGIN: check Supabase, create player if new, block if existing
+            // -------------------------------------------------------------------------
+            async function startGame() {
+                // Hide the already-played message on each attempt
+                document.getElementById('alreadyPlayedMsg').style.display = 'none';
+
+                if (!validateForm()) return;
+
+                const name = document.getElementById('playerName').value.trim();
+                const mobile = document.getElementById('playerMobile').value.trim();
+                const email = document.getElementById('playerEmail').value.trim();
+
+                const btn = document.getElementById('beginBtn');
+                btn.disabled = true;
+                btn.textContent = 'CHECKING...';
+
+                try {
+                    // Check whether this name+email+mobile combination already exists
+                    const { data: existing, error: selectError } = await supabase
+                        .from('players')
+                        .select('id')
+                        .eq('name', name)
+                        .eq('email', email)
+                        .eq('mobile', mobile)
+                        .maybeSingle();
+
+                    if (selectError) throw selectError;
+
+                    if (existing) {
+                        // Player has already used their one attempt
+                        document.getElementById('alreadyPlayedMsg').style.display = 'block';
+                        btn.disabled = false;
+                        btn.textContent = 'BEGIN';
+                        return;
+                    }
+
+                    // New player — insert their record now (highest_score starts at 0)
+                    const { error: insertError } = await supabase
+                        .from('players')
+                        .insert({ name, email, mobile, highest_score: 0 });
+
+                    if (insertError) throw insertError;
+
+                    // Persist identifying info so index.html can update the score later
+                    sessionStorage.setItem('playerInfo', JSON.stringify({ name, mobile, email }));
+
+                    // Launch the game
+                    window.location.href = 'index.html';
+
+                } catch (err) {
+                    console.error('Supabase error:', err);
+                    btn.disabled = false;
+                    btn.textContent = 'BEGIN';
+                    alert('Something went wrong. Please try again.');
+                }
+            }
+
+            // -------------------------------------------------------------------------
+            // Stage 6 — Leaderboard: fetch top 5 from Supabase
+            // -------------------------------------------------------------------------
+            async function loadLeaderboard() {
+                const list = document.getElementById('leaderboardList');
+
+                const { data, error } = await supabase
+                    .from('leaderboard')   // The view we created — exposes only name + highest_score
+                    .select('name, highest_score')
+                    .limit(5);
+
+                if (error) {
+                    console.error('Leaderboard fetch error:', error);
+                    list.innerHTML = '<li style="justify-content:center; color:#c00;">Failed to load</li>';
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<li style="justify-content:center; color:#888;">No scores yet</li>';
+                    return;
+                }
+
+                list.innerHTML = data.map((row, i) => {
+                    const rank = String(i + 1).padStart(2, '0');
+                    const name = row.name.toUpperCase();
+                    const score = row.highest_score;
+                    return `<li><span>${rank} ${name}</span><span>${score}</span></li>`;
+                }).join('');
+            }
+
+            // Load leaderboard on page load
+            loadLeaderboard();
+        </script>
 
 </body>
+
 </html>

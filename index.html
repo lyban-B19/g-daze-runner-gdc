@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
     <script src="index.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
 </head>
 
 <body id="t" class="offline">
@@ -29,16 +32,164 @@
             </template>
         </div>
     </div>
+
+    <!--
+        Stage 5 — Custom game-over overlay.
+        Shown after crash; replaces the canvas restart icon.
+        Hidden by default; revealed by the gameOver hook below.
+    -->
+    <div id="trex-gameover-overlay" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.82);
+        z-index: 9999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Press Start 2P', 'Open Sans', monospace;
+        color: #fff;
+        text-align: center;
+        gap: 24px;
+    ">
+        <div style="font-size: 1.4rem; text-shadow: 3px 3px #000; letter-spacing: 2px;">YOUR SCORE</div>
+        <div id="trex-final-score" style="font-size: 4rem; color: #f7941d; text-shadow: 4px 4px #000;">0</div>
+        <div id="trex-saving-msg" style="font-size: 0.65rem; color: #aaa;">Saving score...</div>
+        <button
+            id="trex-home-btn"
+            onclick="window.location.href='landing.html'"
+            style="
+                margin-top: 12px;
+                background: #e65100;
+                color: #fff;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 1rem;
+                padding: 14px 32px;
+                border: 4px solid #fff;
+                cursor: pointer;
+                box-shadow: 6px 6px 0 #000;
+                transition: transform 0.1s, box-shadow 0.1s;
+            "
+            onmouseover="this.style.background='#ff5722'"
+            onmouseout="this.style.background='#e65100'"
+            onmousedown="this.style.transform='translate(6px,6px)'; this.style.boxShadow='0 0 0 #000';"
+            onmouseup="this.style.transform=''; this.style.boxShadow='6px 6px 0 #000';"
+        >BACK TO HOME</button>
+    </div>
 </body>
 
 <script>
+    // -------------------------------------------------------------------------
+    // Stage 4 & 5 — Supabase score saving + one-attempt game-over enforcement
+    // -------------------------------------------------------------------------
+
+    // Hide the messageBox on Space (existing behaviour preserved)
     document.onkeydown = function(evt) {
-    evt = evt || window.event;
-    if (evt.keyCode == 32) {
-        var box = document.getElementById("messageBox");
-        box.style.visibility="hidden";
+        evt = evt || window.event;
+        if (evt.keyCode == 32) {
+            var box = document.getElementById('messageBox');
+            if (box) box.style.visibility = 'hidden';
+        }
+    };
+
+    // Wait until the Runner is initialised, then hook into it.
+    document.addEventListener('DOMContentLoaded', function () {
+        // The Runner initialises itself on DOMContentLoaded via onDocumentLoad().
+        // We need to patch in slightly after it runs so Runner.instance_ exists.
+        setTimeout(patchRunner, 200);
+    });
+
+    function patchRunner() {
+        var runner = Runner.instance_;
+        if (!runner) {
+            // Not ready yet, try again
+            setTimeout(patchRunner, 100);
+            return;
+        }
+
+        // --- Stage 5: block all restart paths ---
+
+        // Disable the restart() method entirely
+        runner.restart = function () { /* one attempt only — no restart */ };
+
+        // Override onKeyUp to prevent Space/Enter restarting after crash
+        var origKeyUp = runner.onKeyUp.bind(runner);
+        runner.onKeyUp = function (e) {
+            if (runner.crashed) return; // eat all key-up events after crash
+            origKeyUp(e);
+        };
+
+        // Override onKeyDown to prevent touch-restart
+        var origKeyDown = runner.onKeyDown.bind(runner);
+        runner.onKeyDown = function (e) {
+            if (runner.crashed) return; // eat all input after crash
+            origKeyDown(e);
+        };
+
+        // --- Stage 4: hook gameOver() to save score and show overlay ---
+        var origGameOver = runner.gameOver.bind(runner);
+        runner.gameOver = function () {
+            origGameOver();
+
+            // Use the same conversion the game engine uses for its display.
+            // distanceRan is raw game units; getActualDistance() scales it to
+            // the number shown in the HI counter (multiplied by ~0.025).
+            var score = runner.distanceMeter.getActualDistance(Math.ceil(runner.distanceRan));
+
+            // Show the overlay
+            showGameOverOverlay(score);
+
+            // Persist score to Supabase
+            saveScore(score);
+        };
     }
-};
+
+    function showGameOverOverlay(score) {
+        var overlay = document.getElementById('trex-gameover-overlay');
+        document.getElementById('trex-final-score').textContent = score;
+        document.getElementById('trex-saving-msg').textContent = 'Saving score...';
+        overlay.style.display = 'flex';
+        // Load Press Start 2P if not already present (it's on landing.html but not index.html)
+        if (!document.querySelector('link[href*="Press+Start+2P"]')) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css?family=Press+Start+2P';
+            document.head.appendChild(link);
+        }
+    }
+
+    async function saveScore(score) {
+        var savingMsg = document.getElementById('trex-saving-msg');
+
+        // Read player info stored by landing.html
+        var raw = sessionStorage.getItem('playerInfo');
+        if (!raw) {
+            savingMsg.textContent = 'Score not saved (no session).';
+            return;
+        }
+
+        var info;
+        try { info = JSON.parse(raw); } catch(e) {
+            savingMsg.textContent = 'Score not saved (bad session).';
+            return;
+        }
+
+        try {
+            // Update the player's highest_score row (matched by identity)
+            var { error } = await supabase
+                .from('players')
+                .update({ highest_score: score })
+                .eq('name',   info.name)
+                .eq('email',  info.email)
+                .eq('mobile', info.mobile);
+
+            if (error) throw error;
+
+            savingMsg.textContent = 'Score saved!';
+        } catch (err) {
+            console.error('Score save error:', err);
+            savingMsg.textContent = 'Score could not be saved.';
+        }
+    }
 </script>
-    
 </html>

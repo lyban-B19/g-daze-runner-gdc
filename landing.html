@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Rex Runner</title>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f7941d; /* Matches the orange in the image */
+            color: #000;
+            font-family: 'Press Start 2P', monospace;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 4px 4px 0px #333; /* Dark gray/black shadow */
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .logo-placeholder {
+            display: inline-block;
+            background-color: #333;
+            color: #f7941d;
+            padding: 8px 16px;
+            border: 2px solid #fff;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .main-content {
+            display: flex;
+            width: 100%;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .box {
+            background-color: #e5e5e5;
+            border: 4px solid #333;
+            box-shadow: 8px 8px 0px #333;
+            padding: 20px 30px;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .box-title {
+            color: #d32f2f;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Leaderboard */
+        .leaderboard-list {
+            list-style: none;
+            font-size: 0.8rem;
+            line-height: 2.5;
+        }
+
+        .leaderboard-list li {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px dotted #d32f2f;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.6rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            border: 3px solid #333;
+            background-color: #d0dbe5; /* slight blue-grey */
+            color: #333;
+        }
+        
+        input::placeholder {
+            color: #666;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.5rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Button */
+        .begin-btn {
+            background-color: #e65100; /* Darker orange/red */
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 1.8rem;
+            padding: 15px 40px;
+            border: 4px solid #333;
+            cursor: pointer;
+            box-shadow: 8px 8px 0px #333;
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase;
+        }
+
+        .begin-btn:hover {
+            background-color: #ff5722;
+        }
+
+        .begin-btn:active {
+            transform: translate(8px, 8px);
+            box-shadow: 0px 0px 0px #333;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .box {
+                width: 90%;
+            }
+            .title {
+                font-size: 2rem;
+            }
+            .container {
+                overflow-y: auto;
+                height: 100vh;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="title">T-REX RUNNER</h1>
+        <div class="logo-placeholder">[LOGO PLACEHOLDER]</div>
+    </div>
+
+    <div class="main-content">
+        <div class="box">
+            <h2 class="box-title">TOP 5</h2>
+            <!-- TODO: Replace mock leaderboard with Supabase top-5 query -->
+            <ul class="leaderboard-list">
+                <li><span>01 PLAYER ONE</span> <span>1250</span></li>
+                <li><span>02 PLAYER TWO</span> <span>980</span></li>
+                <li><span>03 PLAYER THREE</span> <span>750</span></li>
+                <li><span>04 PLAYER FOUR</span> <span>620</span></li>
+                <li><span>05 PLAYER FIVE</span> <span>540</span></li>
+            </ul>
+        </div>
+
+        <div class="box">
+            <h2 class="box-title">PLAYER INFO</h2>
+            <form id="playerForm">
+                <div class="form-group">
+                    <label for="playerName">Name</label>
+                    <input type="text" id="playerName" placeholder="Enter Name" required>
+                    <div class="error-message" id="nameError">Name is required</div>
+                </div>
+                <div class="form-group">
+                    <label for="playerMobile">Mobile Number</label>
+                    <input type="text" id="playerMobile" placeholder="05xxxxxxxx" required>
+                    <div class="error-message" id="mobileError">Must be 10 digits starting with 05</div>
+                </div>
+                <div class="form-group">
+                    <label for="playerEmail">RIT Email</label>
+                    <input type="email" id="playerEmail" placeholder="email@rit.edu" required>
+                    <div class="error-message" id="emailError">Valid email required</div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <button class="begin-btn" onclick="startGame()">BEGIN</button>
+</div>
+
+<script>
+    function validateForm() {
+        let isValid = true;
+        
+        // Name validation
+        const name = document.getElementById('playerName').value.trim();
+        if (!name) {
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('nameError').style.display = 'none';
+        }
+
+        // Mobile validation
+        const mobile = document.getElementById('playerMobile').value.trim();
+        const mobileRegex = /^05\d{8}$/;
+        if (!mobileRegex.test(mobile)) {
+            document.getElementById('mobileError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('mobileError').style.display = 'none';
+        }
+
+        // Email validation
+        const email = document.getElementById('playerEmail').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            document.getElementById('emailError').style.display = 'block';
+            isValid = false;
+        } else {
+            document.getElementById('emailError').style.display = 'none';
+        }
+
+        return isValid;
+    }
+
+    function startGame() {
+        if (validateForm()) {
+            // Temporarily store player info
+            const playerInfo = {
+                name: document.getElementById('playerName').value.trim(),
+                mobile: document.getElementById('playerMobile').value.trim(),
+                email: document.getElementById('playerEmail').value.trim()
+            };
+            sessionStorage.setItem('playerInfo', JSON.stringify(playerInfo));
+
+            // Transition to the game
+            window.location.href = 'index.html';
+        }
+    }
+</script>
+
+</body>
+</html>

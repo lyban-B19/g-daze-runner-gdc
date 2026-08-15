@@ -76,6 +76,36 @@
             onmousedown="this.style.transform='translate(6px,6px)'; this.style.boxShadow='0 0 0 #000';"
             onmouseup="this.style.transform=''; this.style.boxShadow='6px 6px 0 #000';"
         >BACK TO HOME</button>
+        <button
+            id="trex-retry-btn"
+            onclick="retryGame()"
+            style="
+                background: #3498db;
+                color: #fff;
+                font-family: 'Press Start 2P', monospace;
+                font-size: 1rem;
+                padding: 14px 32px;
+                border: 4px solid #fff;
+                cursor: pointer;
+                box-shadow: 6px 6px 0 #000;
+                transition: transform 0.1s, box-shadow 0.1s;
+            "
+            onmouseover="this.style.background='#2980b9'"
+            onmouseout="this.style.background='#3498db'"
+            onmousedown="this.style.transform='translate(6px,6px)'; this.style.boxShadow='0 0 0 #000';"
+            onmouseup="this.style.transform=''; this.style.boxShadow='6px 6px 0 #000';"
+        >RETRY</button>
+        <div id="trex-locked-msg" style="
+            display: none;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.65rem;
+            color: #ff6b6b;
+            border: 3px solid #ff6b6b;
+            padding: 12px 20px;
+            text-align: center;
+            line-height: 2;
+            box-shadow: 4px 4px 0 #000;
+        ">🔒 GAME LOCKED<br>BY ADMINISTRATOR</div>
     </div>
 </body>
 
@@ -110,9 +140,6 @@
 
         // --- Stage 5: block all restart paths ---
 
-        // Disable the restart() method entirely
-        runner.restart = function () { /* one attempt only — no restart */ };
-
         // Override onKeyUp to prevent Space/Enter restarting after crash
         var origKeyUp = runner.onKeyUp.bind(runner);
         runner.onKeyUp = function (e) {
@@ -145,6 +172,16 @@
         };
     }
 
+    function retryGame() {
+        var overlay = document.getElementById('trex-gameover-overlay');
+        overlay.style.display = 'none'; // hide overlay
+        
+        var runner = Runner.instance_;
+        if (runner) {
+            runner.restart(); // restart the engine natively
+        }
+    }
+
     function showGameOverOverlay(score) {
         var overlay = document.getElementById('trex-gameover-overlay');
         document.getElementById('trex-final-score').textContent = score;
@@ -156,6 +193,35 @@
             link.rel = 'stylesheet';
             link.href = 'https://fonts.googleapis.com/css?family=Press+Start+2P';
             document.head.appendChild(link);
+        }
+
+        // Check if game is locked — if so, hide RETRY and show locked message
+        checkLockForRetry();
+    }
+
+    async function checkLockForRetry() {
+        var retryBtn = document.getElementById('trex-retry-btn');
+        var lockedMsg = document.getElementById('trex-locked-msg');
+
+        try {
+            var { data, error } = await supabase
+                .from('settings')
+                .select('value')
+                .eq('key', 'game_locked')
+                .single();
+
+            if (!error && data && data.value === 'true') {
+                // Game is locked — hide retry, show locked notice
+                retryBtn.style.display = 'none';
+                lockedMsg.style.display = 'block';
+            } else {
+                // Game is open — show retry
+                retryBtn.style.display = 'inline-block';
+                lockedMsg.style.display = 'none';
+            }
+        } catch(e) {
+            // On error, default to showing retry
+            retryBtn.style.display = 'inline-block';
         }
     }
 
@@ -176,21 +242,61 @@
         }
 
         try {
-            // Update the player's highest_score row (matched by identity)
-            var { error } = await supabase
+            // First, fetch the player's current highest_score
+            var { data, error: selectError } = await supabase
                 .from('players')
-                .update({ highest_score: score })
+                .select('highest_score')
                 .eq('name',   info.name)
                 .eq('email',  info.email)
-                .eq('mobile', info.mobile);
+                .eq('mobile', info.mobile)
+                .maybeSingle();
 
-            if (error) throw error;
+            if (selectError) throw selectError;
 
-            savingMsg.textContent = 'Score saved!';
+            // If they exist and the new score is greater, update it
+            // If they exist and the new score is greater, update it
+            if (data && score > data.highest_score) {
+                var { error: updateError } = await supabase
+                    .from('players')
+                    .update({ 
+                        highest_score: score,
+                        updated_at: getFormattedTimestamp()
+                    })
+                    .eq('name',   info.name)
+                    .eq('email',  info.email)
+                    .eq('mobile', info.mobile);
+
+                if (updateError) throw updateError;
+                savingMsg.textContent = 'New High Score Saved!';
+                savingMsg.style.color = '#ffeb3b'; // highlight it!
+            } else {
+                savingMsg.textContent = 'Score not high enough to save.';
+            }
+
         } catch (err) {
             console.error('Score save error:', err);
             savingMsg.textContent = 'Score could not be saved.';
         }
+    }
+
+    function getFormattedTimestamp() {
+        const now = new Date();
+        const d = now.getDate();
+        const ordinals = ["th", "st", "nd", "rd"];
+        const v = d % 100;
+        const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
+        
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const month = months[now.getMonth()];
+        
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
     }
 </script>
 </html>

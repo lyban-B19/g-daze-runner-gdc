@@ -15,9 +15,8 @@
         }
 
         body {
-            background-color: #f7941d;
-            /* Matches the orange in the image */
-            color: #000;
+            background: linear-gradient(to bottom, #0d1321, #1d2d44, #3e5c76); /* Midnight to icy blue */
+            color: #fff;
             font-family: 'Press Start 2P', monospace;
             height: 100vh;
             width: 100vw;
@@ -25,6 +24,50 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        /* Pixel Snow Animation */
+        .snow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .snow {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            box-shadow: 
+                10vw 10vh #fff, 20vw 20vh #e8d0e3, 30vw 30vh #fff, 40vw 40vh #fff, 
+                50vw 50vh #e8d0e3, 60vw 60vh #fff, 70vw 70vh #fff, 80vw 80vh #e8d0e3, 
+                90vw 90vh #fff, 95vw 15vh #fff, 85vw 25vh #fff, 75vw 35vh #e8d0e3, 
+                65vw 45vh #fff, 55vw 55vh #fff, 45vw 65vh #fff, 35vw 75vh #e8d0e3, 
+                25vw 85vh #fff, 15vw 95vh #fff, 5vw 5vh #e8d0e3;
+            animation: snowfall 10s linear infinite;
+        }
+
+        .snow:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            animation-duration: 15s;
+            animation-delay: -5s;
+            opacity: 0.7;
+            box-shadow: 
+                5vw 20vh #fff, 15vw 40vh #fff, 25vw 60vh #e8d0e3, 35vw 80vh #fff, 
+                45vw 10vh #fff, 55vw 30vh #fff, 65vw 50vh #fff, 75vw 70vh #e8d0e3, 
+                85vw 90vh #fff, 95vw 5vh #fff, 10vw 85vh #e8d0e3, 30vw 15vh #fff,
+                80vw 45vh #fff, 50vw 95vh #fff;
+        }
+
+        @keyframes snowfall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
         }
 
         .container {
@@ -34,6 +77,7 @@
             width: 100%;
             max-width: 900px;
             padding: 20px;
+            z-index: 1; /* Keep above snow */
         }
 
         .header {
@@ -44,26 +88,23 @@
         .title {
             font-size: 3rem;
             color: #fff;
-            text-shadow: 4px 4px 0px #333;
-            /* Dark gray/black shadow */
+            text-shadow: 4px 4px 0px #2a0845; /* Deep purple shadow */
             margin-bottom: 15px;
             letter-spacing: 2px;
         }
 
         .subtitle {
             display: inline-block;
-            background-color: #333;
-            color: #ffeb3b;
-            /* Matches the prize highlight */
+            background-color: #2a0845; /* Deep purple */
+            color: #e8d0e3; /* Glowdaze soft pink */
             padding: 8px 24px;
             border-radius: 20px;
-            /* Pill shape */
-            border: 2px dashed #fff;
+            border: 2px dashed #3498db; /* Glowdaze bright eye blue */
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 29px;
-            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
         }
 
         .main-content {
@@ -75,20 +116,22 @@
         }
 
         .box {
-            background-color: #e5e5e5;
-            border: 4px solid #333;
-            box-shadow: 8px 8px 0px #333;
+            background-color: #f0f8ff; /* Icy white */
+            border: 4px solid #2a0845;
+            box-shadow: 8px 8px 0px #1d2d44;
             padding: 20px 30px;
             width: 45%;
             display: flex;
             flex-direction: column;
+            color: #2a0845;
         }
 
         .box-title {
-            color: #d32f2f;
+            color: #3498db; /* Glowdaze blue */
             font-size: 1.2rem;
             text-align: center;
             margin-bottom: 30px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
         /* Leaderboard */
@@ -101,7 +144,7 @@
         .leaderboard-list li {
             display: flex;
             justify-content: space-between;
-            border-bottom: 2px dotted #d32f2f;
+            border-bottom: 2px dotted #3498db;
             margin-bottom: 10px;
             padding-bottom: 5px;
         }
@@ -114,7 +157,7 @@
         label {
             display: block;
             font-size: 0.6rem;
-            color: #333;
+            color: #2a0845;
             margin-bottom: 8px;
         }
 
@@ -123,18 +166,17 @@
             padding: 12px;
             font-family: 'Press Start 2P', monospace;
             font-size: 0.7rem;
-            border: 3px solid #333;
-            background-color: #d0dbe5;
-            /* slight blue-grey */
-            color: #333;
+            border: 3px solid #2a0845;
+            background-color: #e0f7fa; /* Light icy blue */
+            color: #2a0845;
         }
 
         input::placeholder {
-            color: #666;
+            color: #7ab8e6;
         }
 
         .error-message {
-            color: #d32f2f;
+            color: #e74c3c; /* Red for errors */
             font-size: 0.5rem;
             margin-top: 5px;
             display: none;
@@ -142,26 +184,25 @@
 
         /* Button */
         .begin-btn {
-            background-color: #e65100;
-            /* Darker orange/red */
+            background-color: #3498db; /* Glowdaze eye blue */
             color: #fff;
             font-family: 'Press Start 2P', monospace;
             font-size: 1.8rem;
             padding: 15px 40px;
-            border: 4px solid #333;
+            border: 4px solid #2a0845;
             cursor: pointer;
-            box-shadow: 8px 8px 0px #333;
-            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 8px 8px 0px #1d2d44;
+            transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
             text-transform: uppercase;
         }
 
         .begin-btn:hover {
-            background-color: #ff5722;
+            background-color: #2980b9;
         }
 
         .begin-btn:active {
             transform: translate(8px, 8px);
-            box-shadow: 0px 0px 0px #333;
+            box-shadow: 0px 0px 0px #1d2d44;
         }
 
         @media (max-width: 768px) {
@@ -187,11 +228,11 @@
 
         /* Prize Banner */
         .prize-banner {
-            background-color: #333;
+            background-color: #2a0845; /* Deep purple */
             color: #fff;
             padding: 15px 20px;
-            border: 4px solid #fff;
-            box-shadow: 6px 6px 0px #333;
+            border: 4px solid #e8d0e3; /* Soft pink border */
+            box-shadow: 6px 6px 0px #1d2d44;
             margin-bottom: 30px;
             text-align: center;
             font-size: 0.9rem;
@@ -200,8 +241,7 @@
         }
 
         .prize-highlight {
-            color: #ffeb3b;
-            /* Yellow for emphasis */
+            color: #e8d0e3; /* Soft pink emphasis */
             font-size: 1.1rem;
         }
 
@@ -222,6 +262,11 @@
 </head>
 
 <body>
+    <!-- Snow layers -->
+    <div class="snow-container">
+        <div class="snow"></div>
+        <div class="snow"></div>
+    </div>
 
     <div class="container">
         <div class="header">
@@ -243,7 +288,7 @@
                 </ul>
             </div>
 
-            <div class="box">
+            <div class="box" id="playerInfoBox">
                 <h2 class="box-title">PLAYER INFO</h2>
                 <form id="playerForm">
                     <div class="form-group">
@@ -263,14 +308,16 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Shown when admin has locked the game -->
+            <div class="box" id="lockedNotice" style="display:none; justify-content:center; align-items:center; gap:16px; border-color:#c0392b; box-shadow: 8px 8px 0px #7b241c;">
+                <div style="font-size:3rem;">🔒</div>
+                <div style="color:#c0392b; font-size:1rem; line-height:1.8;">GAME LOCKED</div>
+                <div style="font-size:0.55rem; color:#2a0845; line-height:2;">The game is currently locked<br>by the administrator.<br>Please try again later.</div>
+            </div>
         </div>
 
-        <!-- Shown when the player has already played -->
-        <div id="alreadyPlayedMsg"
-            style="display:none; font-size:0.75rem; color:#fff; text-shadow:2px 2px #000; margin-bottom:8px; text-align:center;">
-            hey, you already got a turn :<< /div>
-
-                <button class="begin-btn" id="beginBtn" onclick="startGame()">BEGIN</button>
+        <button class="begin-btn" id="beginBtn" onclick="startGame()">BEGIN</button>
         </div>
 
         <!-- Supabase -->
@@ -278,6 +325,24 @@
         <script src="supabase-client.js"></script>
 
         <script>
+            // -------------------------------------------------------------------------
+            // Game Lock Check
+            // -------------------------------------------------------------------------
+            async function checkGameLock() {
+                const { data, error } = await supabase
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'game_locked')
+                    .single();
+
+                if (!error && data && data.value === 'true') {
+                    // Show locked notice, hide player form and begin button
+                    document.getElementById('playerInfoBox').style.display = 'none';
+                    document.getElementById('lockedNotice').style.display = 'flex';
+                    document.getElementById('beginBtn').style.display = 'none';
+                }
+            }
+
             // -------------------------------------------------------------------------
             // Form validation
             // -------------------------------------------------------------------------
@@ -320,9 +385,6 @@
             // Stage 3 — BEGIN: check Supabase, create player if new, block if existing
             // -------------------------------------------------------------------------
             async function startGame() {
-                // Hide the already-played message on each attempt
-                document.getElementById('alreadyPlayedMsg').style.display = 'none';
-
                 if (!validateForm()) return;
 
                 const name = document.getElementById('playerName').value.trim();
@@ -345,20 +407,20 @@
 
                     if (selectError) throw selectError;
 
-                    if (existing) {
-                        // Player has already used their one attempt
-                        document.getElementById('alreadyPlayedMsg').style.display = 'block';
-                        btn.disabled = false;
-                        btn.textContent = 'BEGIN';
-                        return;
+                    // If they don't exist, insert them as a new player
+                    if (!existing) {
+                        const { error: insertError } = await supabase
+                            .from('players')
+                            .insert({ 
+                                name, 
+                                email, 
+                                mobile, 
+                                highest_score: 0,
+                                updated_at: getFormattedTimestamp()
+                            });
+
+                        if (insertError) throw insertError;
                     }
-
-                    // New player — insert their record now (highest_score starts at 0)
-                    const { error: insertError } = await supabase
-                        .from('players')
-                        .insert({ name, email, mobile, highest_score: 0 });
-
-                    if (insertError) throw insertError;
 
                     // Persist identifying info so index.html can update the score later
                     sessionStorage.setItem('playerInfo', JSON.stringify({ name, mobile, email }));
@@ -404,10 +466,57 @@
                 }).join('');
             }
 
-            // Load leaderboard on page load
+            // Load leaderboard and check lock state on page load
             loadLeaderboard();
+            checkGameLock();
+
+            function getFormattedTimestamp() {
+                const now = new Date();
+                const d = now.getDate();
+                const ordinals = ["th", "st", "nd", "rd"];
+                const v = d % 100;
+                const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
+                
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const month = months[now.getMonth()];
+                
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                
+                return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
+            }
         </script>
 
+        <!-- Admin Control Access -->
+        <button onclick="document.getElementById('adminModal').style.display='flex'" style="position:fixed; bottom:15px; right:15px; font-family:'Press Start 2P', monospace; font-size:0.5rem; background-color:#2a0845; color:#fff; border:2px solid #e8d0e3; cursor:pointer; padding:8px 12px; z-index:100; box-shadow: 4px 4px 0px #1d2d44;">CONTROL ACCESS</button>
+
+        <div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(13, 19, 33, 0.9); z-index:9999; justify-content:center; align-items:center;">
+            <div class="box" style="width: 300px;">
+                <h2 class="box-title" style="margin-bottom: 20px;">ADMIN</h2>
+                <input type="email" id="adminEmail" placeholder="Email" style="margin-bottom: 10px;">
+                <input type="password" id="adminPass" placeholder="Password" style="margin-bottom: 15px;">
+                <div class="error-message" id="adminError" style="margin-bottom: 10px; text-align: center;">Invalid credentials</div>
+                <button onclick="checkAdmin()" class="begin-btn" style="font-size:0.8rem; padding:10px; width:100%; margin-bottom: 10px;">LOGIN</button>
+                <button onclick="document.getElementById('adminModal').style.display='none'; document.getElementById('adminError').style.display='none';" style="background:none; color:#2a0845; font-family:'Press Start 2P', monospace; font-size:0.6rem; border:none; cursor:pointer; text-decoration:underline;">Cancel</button>
+            </div>
+        </div>
+
+        <script>
+            function checkAdmin() {
+                const email = document.getElementById('adminEmail').value.trim();
+                const pass = document.getElementById('adminPass').value;
+                
+                if (email === "km2495@rit.edu" && pass === "VeryBerryStrawberry02") {
+                    window.location.href = 'control.html';
+                } else {
+                    document.getElementById('adminError').style.display = 'block';
+                }
+            }
+        </script>
 </body>
 
 </html>

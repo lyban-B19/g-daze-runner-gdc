@@ -396,34 +396,21 @@
                 btn.textContent = 'CHECKING...';
 
                 try {
-                    // Check whether this name+email+mobile combination already exists
-                    const { data: existing, error: selectError } = await supabase
-                        .from('players')
-                        .select('id')
-                        .eq('name', name)
-                        .eq('email', email)
-                        .eq('mobile', mobile)
-                        .maybeSingle();
+                    // Find-or-create the player. This runs inside the database
+                    // (see supabase-setup.sql) so the browser never reads or
+                    // writes the players table directly — it holds everyone's
+                    // email and mobile number.
+                    const { data: playerId, error: registerError } = await supabase
+                        .rpc('register_player', {
+                            p_name:   name,
+                            p_email:  email,
+                            p_mobile: mobile
+                        });
 
-                    if (selectError) throw selectError;
+                    if (registerError) throw registerError;
 
-                    // If they don't exist, insert them as a new player
-                    if (!existing) {
-                        const { error: insertError } = await supabase
-                            .from('players')
-                            .insert({ 
-                                name, 
-                                email, 
-                                mobile, 
-                                highest_score: 0,
-                                updated_at: getFormattedTimestamp()
-                            });
-
-                        if (insertError) throw insertError;
-                    }
-
-                    // Persist identifying info so index.html can update the score later
-                    sessionStorage.setItem('playerInfo', JSON.stringify({ name, mobile, email }));
+                    // Persist the id so game.html can submit the score later
+                    sessionStorage.setItem('playerInfo', JSON.stringify({ id: playerId, name, mobile, email }));
 
                     // Launch the game
                     window.location.href = 'game.html';
@@ -445,6 +432,7 @@
                 const { data, error } = await supabase
                     .from('leaderboard')   // The view we created — exposes only name + highest_score
                     .select('name, highest_score')
+                    .order('highest_score', { ascending: false })
                     .limit(5);
 
                 if (error) {
@@ -469,26 +457,6 @@
             // Load leaderboard and check lock state on page load
             loadLeaderboard();
             checkGameLock();
-
-            function getFormattedTimestamp() {
-                const now = new Date();
-                const d = now.getDate();
-                const ordinals = ["th", "st", "nd", "rd"];
-                const v = d % 100;
-                const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
-                
-                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                const month = months[now.getMonth()];
-                
-                let hours = now.getHours();
-                let minutes = now.getMinutes();
-                const ampm = hours >= 12 ? 'pm' : 'am';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                
-                return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
-            }
         </script>
 
         <!-- Admin Control Access -->
@@ -506,15 +474,27 @@
         </div>
 
         <script>
-            function checkAdmin() {
+            // Admin login. The credentials live in Supabase Auth rather than in
+            // this file, and the lock switch is enforced server-side against the
+            // signed-in session — see supabase-setup.sql.
+            async function checkAdmin() {
                 const email = document.getElementById('adminEmail').value.trim();
                 const pass = document.getElementById('adminPass').value;
-                
-                if (email === "km2495@rit.edu" && pass === "VeryBerryStrawberry02") {
-                    window.location.href = 'control.html';
-                } else {
-                    document.getElementById('adminError').style.display = 'block';
+                const errorEl = document.getElementById('adminError');
+
+                errorEl.style.display = 'none';
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: pass
+                });
+
+                if (error || !data.session) {
+                    errorEl.style.display = 'block';
+                    return;
                 }
+
+                window.location.href = 'control.html';
             }
         </script>
 </body>

@@ -4,11 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <title >chrome easter egg: t-rex runner</title>
+    <title>G-Daze Runner</title>
     <link rel="icon" type="image/png" href="assets/GDlogo_2_ortp@10x.png">
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
     <script src="index.js"></script>
+    <!-- Swaps the dinosaur for the Glow Daze mascot. Must come after index.js. -->
+    <script src="gd-sprite.js"></script>
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
@@ -187,7 +189,7 @@
         document.getElementById('trex-final-score').textContent = score;
         document.getElementById('trex-saving-msg').textContent = 'Saving score...';
         overlay.style.display = 'flex';
-        // Load Press Start 2P if not already present (it's on landing.html but not index.html)
+        // Load Press Start 2P if not already present (it's on index.html but not game.html)
         if (!document.querySelector('link[href*="Press+Start+2P"]')) {
             var link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -228,7 +230,7 @@
     async function saveScore(score) {
         var savingMsg = document.getElementById('trex-saving-msg');
 
-        // Read player info stored by landing.html
+        // Read player info stored by index.html
         var raw = sessionStorage.getItem('playerInfo');
         if (!raw) {
             savingMsg.textContent = 'Score not saved (no session).';
@@ -241,32 +243,25 @@
             return;
         }
 
+        if (!info.id) {
+            savingMsg.textContent = 'Score not saved (no session).';
+            return;
+        }
+
         try {
-            // First, fetch the player's current highest_score
-            var { data, error: selectError } = await supabase
-                .from('players')
-                .select('highest_score')
-                .eq('name',   info.name)
-                .eq('email',  info.email)
-                .eq('mobile', info.mobile)
-                .maybeSingle();
+            // Submit through the database function (see supabase-setup.sql).
+            // It logs every run with a real timestamp, and raises highest_score
+            // only when the score genuinely beats the player's best — so a score
+            // can't be written to an arbitrary value from the browser console.
+            var { data: result, error: submitError } = await supabase
+                .rpc('submit_score', {
+                    p_player_id: info.id,
+                    p_score:     score
+                });
 
-            if (selectError) throw selectError;
+            if (submitError) throw submitError;
 
-            // If they exist and the new score is greater, update it
-            // If they exist and the new score is greater, update it
-            if (data && score > data.highest_score) {
-                var { error: updateError } = await supabase
-                    .from('players')
-                    .update({ 
-                        highest_score: score,
-                        updated_at: getFormattedTimestamp()
-                    })
-                    .eq('name',   info.name)
-                    .eq('email',  info.email)
-                    .eq('mobile', info.mobile);
-
-                if (updateError) throw updateError;
+            if (result && result.is_best) {
                 savingMsg.textContent = 'New High Score Saved!';
                 savingMsg.style.color = '#ffeb3b'; // highlight it!
             } else {
@@ -279,24 +274,5 @@
         }
     }
 
-    function getFormattedTimestamp() {
-        const now = new Date();
-        const d = now.getDate();
-        const ordinals = ["th", "st", "nd", "rd"];
-        const v = d % 100;
-        const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
-        
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const month = months[now.getMonth()];
-        
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        const ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        
-        return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
-    }
 </script>
 </html>

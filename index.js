@@ -72,6 +72,10 @@
         }
     }
     window['Runner'] = Runner;
+    // Exposed so gd-sprite.js can swap the dinosaur for the Glow Daze mascot.
+    // It needs Trex.config, Trex.animFrames and Trex.collisionBoxes, none of
+    // which are reachable through Runner. This is the only edit to this file.
+    window['Trex'] = Trex;
 
 
     /**

@@ -19,12 +19,13 @@
             /* Midnight to icy blue */
             color: #fff;
             font-family: 'Press Start 2P', monospace;
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             position: relative;
         }
 
@@ -83,6 +84,7 @@
             width: 100%;
             max-width: 900px;
             padding: 20px;
+            padding-bottom: 60px; /* space above fixed buttons */
             z-index: 1;
             /* Keep above snow */
         }
@@ -222,23 +224,83 @@
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .box {
-                width: 90%;
-            }
-
-            .title {
-                font-size: 2rem;
+            body {
+                align-items: flex-start;
             }
 
             .container {
-                overflow-y: auto;
-                height: 100vh;
+                padding: 15px;
+                padding-bottom: 80px;
                 justify-content: flex-start;
+            }
+
+            .header {
+                margin-bottom: 16px;
+            }
+
+            .title {
+                font-size: 1.4rem;
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 0.5rem;
+                padding: 6px 14px;
+                margin-bottom: 14px;
+            }
+
+            .prize-banner {
+                font-size: 0.6rem;
+                padding: 10px 12px;
+                margin-bottom: 16px;
+            }
+
+            .prize-highlight {
+                font-size: 0.8rem;
+            }
+
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .box {
+                width: 100%;
+                padding: 16px 18px;
+            }
+
+            .box-title {
+                font-size: 0.85rem;
+                margin-bottom: 16px;
+            }
+
+            .leaderboard-list {
+                font-size: 0.6rem;
+            }
+
+            label {
+                font-size: 0.5rem;
+            }
+
+            input {
+                font-size: 0.55rem;
+                padding: 10px;
+            }
+
+            .begin-btn {
+                font-size: 1rem;
+                padding: 12px 24px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        /* Hide decorative image on mobile (vertical and horizontal) — too much overlap */
+        @media (max-width: 950px), (max-height: 600px) {
+            .decorative-img {
+                display: none;
             }
         }
 
@@ -518,7 +580,7 @@
         ACCESS</button>
 
     <!-- Decorative Image -->
-    <img src="assets/GD/Glow Daze Sunkissed.png" alt="Glow Daze Sunkissed"
+    <img src="assets/GD/Glow Daze Sunkissed.png" alt="Glow Daze Sunkissed" class="decorative-img"
         style="position:fixed; bottom:0px; right:0px; max-width:350px; z-index:90; pointer-events:none;">
 
     <div id="adminModal"

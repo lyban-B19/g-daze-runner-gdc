@@ -12,11 +12,133 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    <style>
+        /* ---- Rotate-device overlay ---- */
+        #rotate-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, #0d1321, #1d2d44, #3e5c76);
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            font-family: 'Press Start 2P', 'Open Sans', monospace;
+            color: #fff;
+            text-align: center;
+            padding: 30px;
+        }
+        #rotate-overlay .rotate-icon {
+            font-size: 4rem;
+            animation: spin-phone 2s ease-in-out infinite;
+        }
+        @keyframes spin-phone {
+            0%   { transform: rotate(0deg); }
+            30%  { transform: rotate(90deg); }
+            70%  { transform: rotate(90deg); }
+            100% { transform: rotate(90deg); }
+        }
+        #rotate-overlay .rotate-title {
+            font-size: 0.9rem;
+            line-height: 2;
+            color: #e8d0e3;
+            text-shadow: 2px 2px 0px #2a0845;
+        }
+        #rotate-overlay .rotate-sub {
+            font-size: 0.55rem;
+            color: #7ab8e6;
+            line-height: 2;
+        }
+
+        /* ---- Mobile Touch Controls ---- */
+        #mobile-controls {
+            display: none; /* shown only on mobile landscape */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            z-index: 9998;
+            pointer-events: none;
+        }
+        .touch-btn {
+            position: absolute;
+            bottom: 12px;
+            width: 100px;
+            height: 66px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.55rem;
+            color: #fff;
+            border: 3px solid #2a0845;
+            cursor: pointer;
+            pointer-events: all;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: transform 0.08s, box-shadow 0.08s;
+            box-shadow: 5px 5px 0 #1d2d44;
+            letter-spacing: 0.5px;
+        }
+        .touch-btn:active {
+            transform: translate(5px, 5px);
+            box-shadow: 0 0 0 #1d2d44;
+        }
+        .touch-btn .btn-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+        #btn-jump {
+            left: 16px;
+            background: #3498db;
+        }
+        #btn-crouch {
+            right: 16px;
+            background: #2a0845;
+        }
+
+        /* ---- Game-over overlay responsive ---- */
+        @media (max-width: 600px), (max-height: 500px) {
+            #trex-gameover-overlay {
+                gap: 12px !important;
+                padding: 20px;
+            }
+            #trex-gameover-overlay > div:first-child {
+                font-size: 0.75rem !important;
+            }
+            #trex-final-score {
+                font-size: 2.2rem !important;
+            }
+            #trex-saving-msg {
+                font-size: 0.5rem !important;
+            }
+            #trex-home-btn, #trex-retry-btn {
+                font-size: 0.6rem !important;
+                padding: 10px 18px !important;
+                box-shadow: 4px 4px 0 #1d2d44 !important;
+            }
+            #trex-locked-msg {
+                font-size: 0.45rem !important;
+                padding: 8px 12px !important;
+            }
+        }
+    </style>
 </head>
 
 <body id="t" class="offline">
+    <!-- Portrait-mode rotate prompt (mobile only) -->
+    <div id="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <div class="rotate-title">ROTATE YOUR PHONE</div>
+        <div class="rotate-sub">This game plays best<br>in landscape mode ↔</div>
+    </div>
     <div id="messageBox" class="sendmessage">
-         <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to start</h1>
+         <h1 id="msg-desktop" style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to start</h1>
+         <h1 id="msg-mobile" style="display:none; text-align: center;font-family: 'Open Sans', sans-serif; font-size:1.1rem;">Tap screen to start</h1>
          <div class="niokbutton" onclick="okbuttonsend()"></div>
     </div>
     <div id="main-frame-error" class="interstitial-wrapper">
@@ -107,6 +229,18 @@
             box-shadow: 4px 4px 0 #000;
         ">🔒 GAME LOCKED<br>BY ADMINISTRATOR</div>
     </div>
+
+    <!-- Mobile Touch Controls -->
+    <div id="mobile-controls">
+        <button class="touch-btn" id="btn-jump" ontouchstart="mobileTap('jump', true)" ontouchend="mobileTap('jump', false)">
+            <span class="btn-icon">⬆️</span>
+            JUMP
+        </button>
+        <button class="touch-btn" id="btn-crouch" ontouchstart="mobileTap('crouch', true)" ontouchend="mobileTap('crouch', false)">
+            <span class="btn-icon">⬇️</span>
+            CROUCH
+        </button>
+    </div>
 </body>
 
 <script>
@@ -122,6 +256,69 @@
             if (box) box.style.visibility = 'hidden';
         }
     };
+
+    // ---- Portrait-mode overlay + mobile touch controls + start message ----
+    (function () {
+        var overlay    = document.getElementById('rotate-overlay');
+        var controls   = document.getElementById('mobile-controls');
+        var msgDesktop = document.getElementById('msg-desktop');
+        var msgMobile  = document.getElementById('msg-mobile');
+
+        function isMobile() {
+            return ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth <= 1024;
+        }
+        function checkOrientation() {
+            if (!isMobile()) {
+                overlay.style.display   = 'none';
+                controls.style.display  = 'none';
+                msgDesktop.style.display = '';
+                msgMobile.style.display  = 'none';
+                return;
+            }
+            var isPortrait = window.innerHeight > window.innerWidth;
+            overlay.style.display   = isPortrait ? 'flex' : 'none';
+            controls.style.display  = isPortrait ? 'none' : 'flex';
+            msgDesktop.style.display = 'none';
+            msgMobile.style.display  = '';
+
+            // Also allow a tap anywhere on the game canvas to start on mobile
+            if (!isPortrait) {
+                document.addEventListener('touchstart', function startOnTap(e) {
+                    // only hide messageBox if it's still visible
+                    var box = document.getElementById('messageBox');
+                    if (box && box.style.visibility !== 'hidden') {
+                        box.style.visibility = 'hidden';
+                        // fire a synthetic space keydown to start the runner
+                        var ev = new KeyboardEvent('keydown', { keyCode: 32, which: 32, bubbles: true });
+                        document.dispatchEvent(ev);
+                    }
+                }, { once: false });
+            }
+        }
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', function () {
+            setTimeout(checkOrientation, 150);
+        });
+        checkOrientation();
+    })();
+
+    // ---- Mobile touch button handler ----
+    // jump  → Space (keyCode 32) / ArrowUp (38)
+    // crouch → ArrowDown (40)
+    function mobileTap(action, isDown) {
+        var keyCode = action === 'jump' ? 32 : 40;
+        var evType  = isDown ? 'keydown' : 'keyup';
+        var ev = new KeyboardEvent(evType, { keyCode: keyCode, which: keyCode, bubbles: true });
+        document.dispatchEvent(ev);
+
+        // Also hide the start message on first tap (jump = start)
+        if (isDown && action === 'jump') {
+            var box = document.getElementById('messageBox');
+            if (box && box.style.visibility !== 'hidden') {
+                box.style.visibility = 'hidden';
+            }
+        }
+    }
 
     // Wait until the Runner is initialised, then hook into it.
     document.addEventListener('DOMContentLoaded', function () {

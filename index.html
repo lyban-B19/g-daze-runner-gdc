@@ -15,7 +15,8 @@
         }
 
         body {
-            background: linear-gradient(to bottom, #0d1321, #1d2d44, #3e5c76); /* Midnight to icy blue */
+            background: linear-gradient(to bottom, #0d1321, #1d2d44, #3e5c76);
+            /* Midnight to icy blue */
             color: #fff;
             font-family: 'Press Start 2P', monospace;
             height: 100vh;
@@ -43,11 +44,11 @@
             width: 4px;
             height: 4px;
             background: #fff;
-            box-shadow: 
-                10vw 10vh #fff, 20vw 20vh #e8d0e3, 30vw 30vh #fff, 40vw 40vh #fff, 
-                50vw 50vh #e8d0e3, 60vw 60vh #fff, 70vw 70vh #fff, 80vw 80vh #e8d0e3, 
-                90vw 90vh #fff, 95vw 15vh #fff, 85vw 25vh #fff, 75vw 35vh #e8d0e3, 
-                65vw 45vh #fff, 55vw 55vh #fff, 45vw 65vh #fff, 35vw 75vh #e8d0e3, 
+            box-shadow:
+                10vw 10vh #fff, 20vw 20vh #e8d0e3, 30vw 30vh #fff, 40vw 40vh #fff,
+                50vw 50vh #e8d0e3, 60vw 60vh #fff, 70vw 70vh #fff, 80vw 80vh #e8d0e3,
+                90vw 90vh #fff, 95vw 15vh #fff, 85vw 25vh #fff, 75vw 35vh #e8d0e3,
+                65vw 45vh #fff, 55vw 55vh #fff, 45vw 65vh #fff, 35vw 75vh #e8d0e3,
                 25vw 85vh #fff, 15vw 95vh #fff, 5vw 5vh #e8d0e3;
             animation: snowfall 10s linear infinite;
         }
@@ -58,16 +59,21 @@
             animation-duration: 15s;
             animation-delay: -5s;
             opacity: 0.7;
-            box-shadow: 
-                5vw 20vh #fff, 15vw 40vh #fff, 25vw 60vh #e8d0e3, 35vw 80vh #fff, 
-                45vw 10vh #fff, 55vw 30vh #fff, 65vw 50vh #fff, 75vw 70vh #e8d0e3, 
+            box-shadow:
+                5vw 20vh #fff, 15vw 40vh #fff, 25vw 60vh #e8d0e3, 35vw 80vh #fff,
+                45vw 10vh #fff, 55vw 30vh #fff, 65vw 50vh #fff, 75vw 70vh #e8d0e3,
                 85vw 90vh #fff, 95vw 5vh #fff, 10vw 85vh #e8d0e3, 30vw 15vh #fff,
                 80vw 45vh #fff, 50vw 95vh #fff;
         }
 
         @keyframes snowfall {
-            0% { transform: translateY(-100vh); }
-            100% { transform: translateY(100vh); }
+            0% {
+                transform: translateY(-100vh);
+            }
+
+            100% {
+                transform: translateY(100vh);
+            }
         }
 
         .container {
@@ -77,7 +83,8 @@
             width: 100%;
             max-width: 900px;
             padding: 20px;
-            z-index: 1; /* Keep above snow */
+            z-index: 1;
+            /* Keep above snow */
         }
 
         .header {
@@ -88,18 +95,22 @@
         .title {
             font-size: 3rem;
             color: #fff;
-            text-shadow: 4px 4px 0px #2a0845; /* Deep purple shadow */
+            text-shadow: 4px 4px 0px #2a0845;
+            /* Deep purple shadow */
             margin-bottom: 15px;
             letter-spacing: 2px;
         }
 
         .subtitle {
             display: inline-block;
-            background-color: #2a0845; /* Deep purple */
-            color: #e8d0e3; /* Glowdaze soft pink */
+            background-color: #2a0845;
+            /* Deep purple */
+            color: #e8d0e3;
+            /* Glowdaze soft pink */
             padding: 8px 24px;
             border-radius: 20px;
-            border: 2px dashed #3498db; /* Glowdaze bright eye blue */
+            border: 2px dashed #3498db;
+            /* Glowdaze bright eye blue */
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -116,7 +127,8 @@
         }
 
         .box {
-            background-color: #f0f8ff; /* Icy white */
+            background-color: #f0f8ff;
+            /* Icy white */
             border: 4px solid #2a0845;
             box-shadow: 8px 8px 0px #1d2d44;
             padding: 20px 30px;
@@ -127,11 +139,12 @@
         }
 
         .box-title {
-            color: #3498db; /* Glowdaze blue */
+            color: #3498db;
+            /* Glowdaze blue */
             font-size: 1.2rem;
             text-align: center;
             margin-bottom: 30px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
         }
 
         /* Leaderboard */
@@ -167,7 +180,8 @@
             font-family: 'Press Start 2P', monospace;
             font-size: 0.7rem;
             border: 3px solid #2a0845;
-            background-color: #e0f7fa; /* Light icy blue */
+            background-color: #e0f7fa;
+            /* Light icy blue */
             color: #2a0845;
         }
 
@@ -176,7 +190,8 @@
         }
 
         .error-message {
-            color: #e74c3c; /* Red for errors */
+            color: #e74c3c;
+            /* Red for errors */
             font-size: 0.5rem;
             margin-top: 5px;
             display: none;
@@ -184,7 +199,8 @@
 
         /* Button */
         .begin-btn {
-            background-color: #3498db; /* Glowdaze eye blue */
+            background-color: #3498db;
+            /* Glowdaze eye blue */
             color: #fff;
             font-family: 'Press Start 2P', monospace;
             font-size: 1.8rem;
@@ -228,10 +244,12 @@
 
         /* Prize Banner */
         .prize-banner {
-            background-color: #2a0845; /* Deep purple */
+            background-color: #2a0845;
+            /* Deep purple */
             color: #fff;
             padding: 15px 20px;
-            border: 4px solid #e8d0e3; /* Soft pink border */
+            border: 4px solid #e8d0e3;
+            /* Soft pink border */
             box-shadow: 6px 6px 0px #1d2d44;
             margin-bottom: 30px;
             text-align: center;
@@ -241,7 +259,8 @@
         }
 
         .prize-highlight {
-            color: #e8d0e3; /* Soft pink emphasis */
+            color: #e8d0e3;
+            /* Soft pink emphasis */
             font-size: 1.1rem;
         }
 
@@ -310,193 +329,226 @@
             </div>
 
             <!-- Shown when admin has locked the game -->
-            <div class="box" id="lockedNotice" style="display:none; justify-content:center; align-items:center; gap:16px; border-color:#c0392b; box-shadow: 8px 8px 0px #7b241c;">
+            <div class="box" id="lockedNotice"
+                style="display:none; justify-content:center; align-items:center; gap:16px; border-color:#c0392b; box-shadow: 8px 8px 0px #7b241c;">
                 <div style="font-size:3rem;">🔒</div>
                 <div style="color:#c0392b; font-size:1rem; line-height:1.8;">GAME LOCKED</div>
-                <div style="font-size:0.55rem; color:#2a0845; line-height:2;">The game is currently locked<br>by the administrator.<br>Please try again later.</div>
+                <div style="font-size:0.55rem; color:#2a0845; line-height:2;">The game is currently locked<br>by the
+                    administrator.<br>Please try again later.</div>
             </div>
         </div>
 
         <button class="begin-btn" id="beginBtn" onclick="startGame()">BEGIN</button>
-        </div>
+    </div>
 
-        <!-- Supabase -->
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="supabase-client.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
 
-        <script>
-            // -------------------------------------------------------------------------
-            // Game Lock Check
-            // -------------------------------------------------------------------------
-            async function checkGameLock() {
-                const { data, error } = await supabase
-                    .from('settings')
-                    .select('value')
-                    .eq('key', 'game_locked')
-                    .single();
+    <script>
+        // -------------------------------------------------------------------------
+        // Game Lock Check
+        // -------------------------------------------------------------------------
+        async function checkGameLock() {
+            const { data, error } = await supabase
+                .from('settings')
+                .select('value')
+                .eq('key', 'game_locked')
+                .single();
 
-                if (!error && data && data.value === 'true') {
-                    // Show locked notice, hide player form and begin button
-                    document.getElementById('playerInfoBox').style.display = 'none';
-                    document.getElementById('lockedNotice').style.display = 'flex';
-                    document.getElementById('beginBtn').style.display = 'none';
-                }
+            if (!error && data && data.value === 'true') {
+                // Show locked notice, hide player form and begin button
+                document.getElementById('playerInfoBox').style.display = 'none';
+                document.getElementById('lockedNotice').style.display = 'flex';
+                document.getElementById('beginBtn').style.display = 'none';
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // Form validation
+        // -------------------------------------------------------------------------
+        function validateForm() {
+            let isValid = true;
+
+            // Name
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
             }
 
-            // -------------------------------------------------------------------------
-            // Form validation
-            // -------------------------------------------------------------------------
-            function validateForm() {
-                let isValid = true;
-
-                // Name
-                const name = document.getElementById('playerName').value.trim();
-                if (!name) {
-                    document.getElementById('nameError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('nameError').style.display = 'none';
-                }
-
-                // Mobile — UAE format: 05xxxxxxxx (exactly 10 digits)
-                const mobile = document.getElementById('playerMobile').value.trim();
-                const mobileRegex = /^05\d{8}$/;
-                if (!mobileRegex.test(mobile)) {
-                    document.getElementById('mobileError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('mobileError').style.display = 'none';
-                }
-
-                // Email
-                const email = document.getElementById('playerEmail').value.trim();
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    document.getElementById('emailError').style.display = 'block';
-                    isValid = false;
-                } else {
-                    document.getElementById('emailError').style.display = 'none';
-                }
-
-                return isValid;
+            // Mobile — UAE format: 05xxxxxxxx (exactly 10 digits)
+            const mobile = document.getElementById('playerMobile').value.trim();
+            const mobileRegex = /^05\d{8}$/;
+            if (!mobileRegex.test(mobile)) {
+                document.getElementById('mobileError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('mobileError').style.display = 'none';
             }
 
-            // -------------------------------------------------------------------------
-            // Stage 3 — BEGIN: check Supabase, create player if new, block if existing
-            // -------------------------------------------------------------------------
-            async function startGame() {
-                if (!validateForm()) return;
+            // Email
+            const email = document.getElementById('playerEmail').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
 
-                const name = document.getElementById('playerName').value.trim();
-                const mobile = document.getElementById('playerMobile').value.trim();
-                const email = document.getElementById('playerEmail').value.trim();
+            return isValid;
+        }
 
-                const btn = document.getElementById('beginBtn');
-                btn.disabled = true;
-                btn.textContent = 'CHECKING...';
+        // -------------------------------------------------------------------------
+        // Stage 3 — BEGIN: check Supabase, create player if new, block if existing
+        // -------------------------------------------------------------------------
+        async function startGame() {
+            if (!validateForm()) return;
 
-                try {
-                    // Find-or-create the player. This runs inside the database
-                    // (see supabase-setup.sql) so the browser never reads or
-                    // writes the players table directly — it holds everyone's
-                    // email and mobile number.
-                    const { data: playerId, error: registerError } = await supabase
-                        .rpc('register_player', {
-                            p_name:   name,
-                            p_email:  email,
-                            p_mobile: mobile
+            const name = document.getElementById('playerName').value.trim();
+            const mobile = document.getElementById('playerMobile').value.trim();
+            const email = document.getElementById('playerEmail').value.trim();
+
+            const btn = document.getElementById('beginBtn');
+            btn.disabled = true;
+            btn.textContent = 'CHECKING...';
+
+            try {
+                // Check whether this name+email+mobile combination already exists
+                const { data: existing, error: selectError } = await supabase
+                    .from('players')
+                    .select('id')
+                    .eq('name', name)
+                    .eq('email', email)
+                    .eq('mobile', mobile)
+                    .maybeSingle();
+
+                if (selectError) throw selectError;
+
+                // If they don't exist, insert them as a new player
+                if (!existing) {
+                    const { error: insertError } = await supabase
+                        .from('players')
+                        .insert({
+                            name,
+                            email,
+                            mobile,
+                            highest_score: 0,
+                            updated_at: getFormattedTimestamp()
                         });
 
-                    if (registerError) throw registerError;
-
-                    // Persist the id so game.html can submit the score later
-                    sessionStorage.setItem('playerInfo', JSON.stringify({ id: playerId, name, mobile, email }));
-
-                    // Launch the game
-                    window.location.href = 'game.html';
-
-                } catch (err) {
-                    console.error('Supabase error:', err);
-                    btn.disabled = false;
-                    btn.textContent = 'BEGIN';
-                    alert('Something went wrong. Please try again.');
+                    if (insertError) throw insertError;
                 }
+
+                // Persist identifying info so index.html can update the score later
+                sessionStorage.setItem('playerInfo', JSON.stringify({ name, mobile, email }));
+
+                // Launch the game
+                window.location.href = 'game.html';
+
+            } catch (err) {
+                console.error('Supabase error:', err);
+                btn.disabled = false;
+                btn.textContent = 'BEGIN';
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // Stage 6 — Leaderboard: fetch top 5 from Supabase
+        // -------------------------------------------------------------------------
+        async function loadLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+
+            const { data, error } = await supabase
+                .from('leaderboard')   // The view we created — exposes only name + highest_score
+                .select('name, highest_score')
+                .limit(5);
+
+            if (error) {
+                console.error('Leaderboard fetch error:', error);
+                list.innerHTML = '<li style="justify-content:center; color:#c00;">Failed to load</li>';
+                return;
             }
 
-            // -------------------------------------------------------------------------
-            // Stage 6 — Leaderboard: fetch top 5 from Supabase
-            // -------------------------------------------------------------------------
-            async function loadLeaderboard() {
-                const list = document.getElementById('leaderboardList');
-
-                const { data, error } = await supabase
-                    .from('leaderboard')   // The view we created — exposes only name + highest_score
-                    .select('name, highest_score')
-                    .order('highest_score', { ascending: false })
-                    .limit(5);
-
-                if (error) {
-                    console.error('Leaderboard fetch error:', error);
-                    list.innerHTML = '<li style="justify-content:center; color:#c00;">Failed to load</li>';
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<li style="justify-content:center; color:#888;">No scores yet</li>';
-                    return;
-                }
-
-                list.innerHTML = data.map((row, i) => {
-                    const rank = String(i + 1).padStart(2, '0');
-                    const name = row.name.toUpperCase();
-                    const score = row.highest_score;
-                    return `<li><span>${rank} ${name}</span><span>${score}</span></li>`;
-                }).join('');
+            if (!data || data.length === 0) {
+                list.innerHTML = '<li style="justify-content:center; color:#888;">No scores yet</li>';
+                return;
             }
 
-            // Load leaderboard and check lock state on page load
-            loadLeaderboard();
-            checkGameLock();
-        </script>
+            list.innerHTML = data.map((row, i) => {
+                const rank = String(i + 1).padStart(2, '0');
+                const name = row.name.toUpperCase();
+                const score = row.highest_score;
+                return `<li><span>${rank} ${name}</span><span>${score}</span></li>`;
+            }).join('');
+        }
 
-        <!-- Admin Control Access -->
-        <button onclick="document.getElementById('adminModal').style.display='flex'" style="position:fixed; bottom:15px; right:15px; font-family:'Press Start 2P', monospace; font-size:0.5rem; background-color:#2a0845; color:#fff; border:2px solid #e8d0e3; cursor:pointer; padding:8px 12px; z-index:100; box-shadow: 4px 4px 0px #1d2d44;">CONTROL ACCESS</button>
+        // Load leaderboard and check lock state on page load
+        loadLeaderboard();
+        checkGameLock();
 
-        <div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(13, 19, 33, 0.9); z-index:9999; justify-content:center; align-items:center;">
-            <div class="box" style="width: 300px;">
-                <h2 class="box-title" style="margin-bottom: 20px;">ADMIN</h2>
-                <input type="email" id="adminEmail" placeholder="Email" style="margin-bottom: 10px;">
-                <input type="password" id="adminPass" placeholder="Password" style="margin-bottom: 15px;">
-                <div class="error-message" id="adminError" style="margin-bottom: 10px; text-align: center;">Invalid credentials</div>
-                <button onclick="checkAdmin()" class="begin-btn" style="font-size:0.8rem; padding:10px; width:100%; margin-bottom: 10px;">LOGIN</button>
-                <button onclick="document.getElementById('adminModal').style.display='none'; document.getElementById('adminError').style.display='none';" style="background:none; color:#2a0845; font-family:'Press Start 2P', monospace; font-size:0.6rem; border:none; cursor:pointer; text-decoration:underline;">Cancel</button>
-            </div>
+        function getFormattedTimestamp() {
+            const now = new Date();
+            const d = now.getDate();
+            const ordinals = ["th", "st", "nd", "rd"];
+            const v = d % 100;
+            const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
+
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const month = months[now.getMonth()];
+
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
+        }
+    </script>
+
+    <!-- Admin Control Access -->
+    <button onclick="document.getElementById('adminModal').style.display='flex'"
+        style="position:fixed; bottom:15px; right:15px; font-family:'Press Start 2P', monospace; font-size:0.5rem; background-color:#2a0845; color:#fff; border:2px solid #e8d0e3; cursor:pointer; padding:8px 12px; z-index:100; box-shadow: 4px 4px 0px #1d2d44;">CONTROL
+        ACCESS</button>
+
+    <!-- Decorative Image -->
+    <img src="assets/GD/Glow Daze Sunkissed.png" alt="Glow Daze Sunkissed"
+        style="position:fixed; bottom:0px; right:0px; max-width:350px; z-index:90; pointer-events:none;">
+
+    <div id="adminModal"
+        style="display:none; position:fixed; inset:0; background:rgba(13, 19, 33, 0.9); z-index:9999; justify-content:center; align-items:center;">
+        <div class="box" style="width: 300px;">
+            <h2 class="box-title" style="margin-bottom: 20px;">ADMIN</h2>
+            <input type="email" id="adminEmail" placeholder="Email" style="margin-bottom: 10px;">
+            <input type="password" id="adminPass" placeholder="Password" style="margin-bottom: 15px;">
+            <div class="error-message" id="adminError" style="margin-bottom: 10px; text-align: center;">Invalid
+                credentials</div>
+            <button onclick="checkAdmin()" class="begin-btn"
+                style="font-size:0.8rem; padding:10px; width:100%; margin-bottom: 10px;">LOGIN</button>
+            <button
+                onclick="document.getElementById('adminModal').style.display='none'; document.getElementById('adminError').style.display='none';"
+                style="background:none; color:#2a0845; font-family:'Press Start 2P', monospace; font-size:0.6rem; border:none; cursor:pointer; text-decoration:underline;">Cancel</button>
         </div>
+    </div>
 
-        <script>
-            // Admin login. The credentials live in Supabase Auth rather than in
-            // this file, and the lock switch is enforced server-side against the
-            // signed-in session — see supabase-setup.sql.
-            async function checkAdmin() {
-                const email = document.getElementById('adminEmail').value.trim();
-                const pass = document.getElementById('adminPass').value;
-                const errorEl = document.getElementById('adminError');
+    <script>
+        function checkAdmin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPass').value;
 
-                errorEl.style.display = 'none';
-
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: pass
-                });
-
-                if (error || !data.session) {
-                    errorEl.style.display = 'block';
-                    return;
-                }
-
+            if (email === "km2495@rit.edu" && pass === "VeryBerryStrawberry02") {
                 window.location.href = 'control.html';
+            } else {
+                document.getElementById('adminError').style.display = 'block';
             }
-        </script>
+        }
+    </script>
 </body>
 
 </html>

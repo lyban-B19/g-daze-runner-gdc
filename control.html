@@ -182,21 +182,6 @@
     <script>
         let isUpdating = false;
 
-        // Admin gate. Anyone who reaches this page without signing in through
-        // index.html gets sent back. This is only for tidiness — the real
-        // protection is the row-level policy in supabase-setup.sql, which
-        // refuses the update itself unless the request carries an admin session.
-        async function requireAdmin() {
-            const { data: { session } } = await supabase.auth.getSession();
-
-            if (!session) {
-                window.location.replace('index.html');
-                return false;
-            }
-
-            return true;
-        }
-
         async function loadLockStatus() {
             const msg = document.getElementById('loadingMsg');
             const { data, error } = await supabase
@@ -257,9 +242,7 @@
             isUpdating = false;
         }
 
-        requireAdmin().then(function (ok) {
-            if (ok) loadLockStatus();
-        });
+        loadLockStatus();
     </script>
 </body>
 

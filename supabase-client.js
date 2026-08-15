@@ -1,5 +1,5 @@
 // supabase-client.js
-// Shared Supabase client for the G-Daze Runner project.
+// Shared Supabase client for the T-Rex Runner project.
 // Import this file AFTER the Supabase CDN script tag.
 
 const SUPABASE_URL  = 'https://pasffslberjhdhxikeuj.supabase.co';

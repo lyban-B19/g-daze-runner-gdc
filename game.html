@@ -4,13 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
-    <title>G-Daze Runner</title>
+    <title >chrome easter egg: t-rex runner</title>
     <link rel="icon" type="image/png" href="assets/GDlogo_2_ortp@10x.png">
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
     <script src="index.js"></script>
-    <!-- Swaps the dinosaur for the Glow Daze mascot. Must come after index.js. -->
-    <script src="gd-sprite.js"></script>
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
@@ -55,28 +53,28 @@
         text-align: center;
         gap: 24px;
     ">
-        <div style="font-size: 1.4rem; text-shadow: 3px 3px #000; letter-spacing: 2px;">YOUR SCORE</div>
-        <div id="trex-final-score" style="font-size: 4rem; color: #f7941d; text-shadow: 4px 4px #000;">0</div>
-        <div id="trex-saving-msg" style="font-size: 0.65rem; color: #aaa;">Saving score...</div>
+        <div style="font-size: 1.4rem; color: #fff; text-shadow: 4px 4px 0px #2a0845; letter-spacing: 2px;">YOUR SCORE</div>
+        <div id="trex-final-score" style="font-size: 4rem; color: #3498db; text-shadow: 4px 4px 0px #2a0845;">0</div>
+        <div id="trex-saving-msg" style="font-size: 0.65rem; color: #e8d0e3;">Saving score...</div>
         <button
             id="trex-home-btn"
             onclick="window.location.href='index.html'"
             style="
                 margin-top: 12px;
-                background: #e65100;
+                background: #3498db;
                 color: #fff;
                 font-family: 'Press Start 2P', monospace;
                 font-size: 1rem;
                 padding: 14px 32px;
-                border: 4px solid #fff;
+                border: 4px solid #2a0845;
                 cursor: pointer;
-                box-shadow: 6px 6px 0 #000;
+                box-shadow: 8px 8px 0 #1d2d44;
                 transition: transform 0.1s, box-shadow 0.1s;
             "
-            onmouseover="this.style.background='#ff5722'"
-            onmouseout="this.style.background='#e65100'"
-            onmousedown="this.style.transform='translate(6px,6px)'; this.style.boxShadow='0 0 0 #000';"
-            onmouseup="this.style.transform=''; this.style.boxShadow='6px 6px 0 #000';"
+            onmouseover="this.style.background='#2980b9'"
+            onmouseout="this.style.background='#3498db'"
+            onmousedown="this.style.transform='translate(8px,8px)'; this.style.boxShadow='0 0 0 #1d2d44';"
+            onmouseup="this.style.transform=''; this.style.boxShadow='8px 8px 0 #1d2d44';"
         >BACK TO HOME</button>
         <button
             id="trex-retry-btn"
@@ -87,15 +85,15 @@
                 font-family: 'Press Start 2P', monospace;
                 font-size: 1rem;
                 padding: 14px 32px;
-                border: 4px solid #fff;
+                border: 4px solid #2a0845;
                 cursor: pointer;
-                box-shadow: 6px 6px 0 #000;
+                box-shadow: 8px 8px 0 #1d2d44;
                 transition: transform 0.1s, box-shadow 0.1s;
             "
             onmouseover="this.style.background='#2980b9'"
             onmouseout="this.style.background='#3498db'"
-            onmousedown="this.style.transform='translate(6px,6px)'; this.style.boxShadow='0 0 0 #000';"
-            onmouseup="this.style.transform=''; this.style.boxShadow='6px 6px 0 #000';"
+            onmousedown="this.style.transform='translate(8px,8px)'; this.style.boxShadow='0 0 0 #1d2d44';"
+            onmouseup="this.style.transform=''; this.style.boxShadow='8px 8px 0 #1d2d44';"
         >RETRY</button>
         <div id="trex-locked-msg" style="
             display: none;
@@ -189,7 +187,7 @@
         document.getElementById('trex-final-score').textContent = score;
         document.getElementById('trex-saving-msg').textContent = 'Saving score...';
         overlay.style.display = 'flex';
-        // Load Press Start 2P if not already present (it's on index.html but not game.html)
+        // Load Press Start 2P if not already present (it's on landing.html but not index.html)
         if (!document.querySelector('link[href*="Press+Start+2P"]')) {
             var link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -230,7 +228,7 @@
     async function saveScore(score) {
         var savingMsg = document.getElementById('trex-saving-msg');
 
-        // Read player info stored by index.html
+        // Read player info stored by landing.html
         var raw = sessionStorage.getItem('playerInfo');
         if (!raw) {
             savingMsg.textContent = 'Score not saved (no session).';
@@ -243,25 +241,32 @@
             return;
         }
 
-        if (!info.id) {
-            savingMsg.textContent = 'Score not saved (no session).';
-            return;
-        }
-
         try {
-            // Submit through the database function (see supabase-setup.sql).
-            // It logs every run with a real timestamp, and raises highest_score
-            // only when the score genuinely beats the player's best — so a score
-            // can't be written to an arbitrary value from the browser console.
-            var { data: result, error: submitError } = await supabase
-                .rpc('submit_score', {
-                    p_player_id: info.id,
-                    p_score:     score
-                });
+            // First, fetch the player's current highest_score
+            var { data, error: selectError } = await supabase
+                .from('players')
+                .select('highest_score')
+                .eq('name',   info.name)
+                .eq('email',  info.email)
+                .eq('mobile', info.mobile)
+                .maybeSingle();
 
-            if (submitError) throw submitError;
+            if (selectError) throw selectError;
 
-            if (result && result.is_best) {
+            // If they exist and the new score is greater, update it
+            // If they exist and the new score is greater, update it
+            if (data && score > data.highest_score) {
+                var { error: updateError } = await supabase
+                    .from('players')
+                    .update({ 
+                        highest_score: score,
+                        updated_at: getFormattedTimestamp()
+                    })
+                    .eq('name',   info.name)
+                    .eq('email',  info.email)
+                    .eq('mobile', info.mobile);
+
+                if (updateError) throw updateError;
                 savingMsg.textContent = 'New High Score Saved!';
                 savingMsg.style.color = '#ffeb3b'; // highlight it!
             } else {
@@ -274,5 +279,24 @@
         }
     }
 
+    function getFormattedTimestamp() {
+        const now = new Date();
+        const d = now.getDate();
+        const ordinals = ["th", "st", "nd", "rd"];
+        const v = d % 100;
+        const suffix = (ordinals[(v - 20) % 10] || ordinals[v] || ordinals[0]);
+        
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const month = months[now.getMonth()];
+        
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        return `${d}${suffix} ${month}, ${hours}:${minutes}${ampm}`;
+    }
 </script>
 </html>

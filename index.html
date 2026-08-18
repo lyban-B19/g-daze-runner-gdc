@@ -383,9 +383,9 @@
                         <div class="error-message" id="mobileError">Must be 10 digits starting with 05</div>
                     </div>
                     <div class="form-group">
-                        <label for="playerEmail">RIT Email</label>
-                        <input type="email" id="playerEmail" placeholder="email@rit.edu" required>
-                        <div class="error-message" id="emailError">Must be a valid @rit.edu email</div>
+                        <label for="playerEmail">Email</label>
+                        <input type="email" id="playerEmail" placeholder="email@example.com" required>
+                        <div class="error-message" id="emailError">Valid email required</div>
                     </div>
                 </form>
             </div>
@@ -451,9 +451,9 @@
                 document.getElementById('mobileError').style.display = 'none';
             }
 
-            // Email (Must end with @rit.edu)
+            // Email
             const email = document.getElementById('playerEmail').value.trim();
-            const emailRegex = /^[^\s@]+@([a-zA-Z0-9-]+\.)*rit\.edu$/i;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;

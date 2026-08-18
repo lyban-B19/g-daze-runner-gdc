@@ -385,7 +385,7 @@
                     <div class="form-group">
                         <label for="playerEmail">RIT Email</label>
                         <input type="email" id="playerEmail" placeholder="email@rit.edu" required>
-                        <div class="error-message" id="emailError">Valid email required</div>
+                        <div class="error-message" id="emailError">Must be a valid @rit.edu email</div>
                     </div>
                 </form>
             </div>
@@ -451,9 +451,9 @@
                 document.getElementById('mobileError').style.display = 'none';
             }
 
-            // Email
+            // Email (Must end with @rit.edu)
             const email = document.getElementById('playerEmail').value.trim();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@([a-zA-Z0-9-]+\.)*rit\.edu$/i;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;

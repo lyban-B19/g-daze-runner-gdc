@@ -84,7 +84,8 @@
             width: 100%;
             max-width: 900px;
             padding: 20px;
-            padding-bottom: 60px; /* space above fixed buttons */
+            padding-bottom: 60px;
+            /* space above fixed buttons */
             z-index: 1;
             /* Keep above snow */
         }
@@ -298,7 +299,8 @@
         }
 
         /* Hide decorative image on mobile (vertical and horizontal) — too much overlap */
-        @media (max-width: 950px), (max-height: 600px) {
+        @media (max-width: 950px),
+        (max-height: 600px) {
             .decorative-img {
                 display: none;
             }
@@ -356,8 +358,9 @@
         </div>
 
         <div class="prize-banner">
-            ⭐ TODAY'S TOP SCORER WINS <br>
-            <span class="prize-highlight">AED 100 DHS!</span> ⭐
+            ⭐ OUR WINNERS ⭐ <br>
+            <span class="prize-highlight">Aug 18th: Mahmoud Mansour!! <br></span>
+            <span class="prize-highlight">Aug 19th: 3MK!!</span>
         </div>
 
         <div class="main-content">
@@ -367,6 +370,16 @@
                 <ul class="leaderboard-list" id="leaderboardList">
                     <li style="justify-content:center; color:#888;">Loading...</li>
                 </ul>
+                <div class="pagination" id="leaderboardPagination"
+                    style="display: none; justify-content: space-between; margin-top: 10px; font-size: 0.6rem;">
+                    <button onclick="changeLeaderboardPage(-1)" id="prevPageBtn" disabled
+                        style="background: none; border: none; color: #3498db; font-family: 'Press Start 2P', monospace; cursor: pointer; text-decoration: underline;">&lt;
+                        PREV</button>
+                    <span id="pageIndicator" style="color: #e8d0e3;">1/2</span>
+                    <button onclick="changeLeaderboardPage(1)" id="nextPageBtn"
+                        style="background: none; border: none; color: #3498db; font-family: 'Press Start 2P', monospace; cursor: pointer; text-decoration: underline;">NEXT
+                        &gt;</button>
+                </div>
             </div>
 
             <div class="box" id="playerInfoBox">
@@ -520,16 +533,20 @@
         }
 
         // -------------------------------------------------------------------------
-        // Stage 6 — Leaderboard: fetch top 5 from Supabase
+        // Stage 6 — Leaderboard: fetch top 10 from Supabase
         // -------------------------------------------------------------------------
+        let leaderboardData = [];
+        let currentLeaderboardPage = 1;
+        const itemsPerPage = 5;
+
         async function loadLeaderboard() {
             const list = document.getElementById('leaderboardList');
 
             const { data, error } = await supabase
-                .from('leaderboard')   // The view we created — exposes only name + highest_score
+                .from('players')
                 .select('name, highest_score')
-                .limit(5);
-
+                .order('highest_score', { ascending: false })
+                .limit(10);
             if (error) {
                 console.error('Leaderboard fetch error:', error);
                 list.innerHTML = '<li style="justify-content:center; color:#c00;">Failed to load</li>';
@@ -541,12 +558,41 @@
                 return;
             }
 
-            list.innerHTML = data.map((row, i) => {
-                const rank = String(i + 1).padStart(2, '0');
+            leaderboardData = data;
+            renderLeaderboardPage();
+        }
+
+        function renderLeaderboardPage() {
+            const list = document.getElementById('leaderboardList');
+            const pagination = document.getElementById('leaderboardPagination');
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            const indicator = document.getElementById('pageIndicator');
+
+            const startIndex = (currentLeaderboardPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = leaderboardData.slice(startIndex, endIndex);
+
+            list.innerHTML = pageData.map((row, i) => {
+                const rank = String(startIndex + i + 1).padStart(2, '0');
                 const name = row.name.toUpperCase();
                 const score = row.highest_score;
                 return `<li><span>${rank} ${name}</span><span>${score}</span></li>`;
             }).join('');
+
+            if (leaderboardData.length > itemsPerPage) {
+                pagination.style.display = 'flex';
+                indicator.textContent = `${currentLeaderboardPage}/${Math.ceil(leaderboardData.length / itemsPerPage)}`;
+                prevBtn.disabled = currentLeaderboardPage === 1;
+                prevBtn.style.color = prevBtn.disabled ? '#888' : '#3498db';
+                nextBtn.disabled = endIndex >= leaderboardData.length;
+                nextBtn.style.color = nextBtn.disabled ? '#888' : '#3498db';
+            }
+        }
+
+        function changeLeaderboardPage(dir) {
+            currentLeaderboardPage += dir;
+            renderLeaderboardPage();
         }
 
         // Load leaderboard and check lock state on page load
